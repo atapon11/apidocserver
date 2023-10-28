@@ -25,6 +25,8 @@ server.get('/data', (req, res) => {
 
 // ฟังก์ชัน POST เพื่อบันทึกข้อมูลลงในไฟล์ JSON
 server.post('/data', (req, res) => {
+  console.log('Received POST request with data:', req.body); // เพิ่มบันทึกนี้
+
   try {
     const updatedData = req.body; // ข้อมูลจากคำขอ POST
     const filePath = path.join(__dirname, 'data.json');
@@ -37,6 +39,7 @@ server.post('/data', (req, res) => {
     res.status(500).json({ message: 'เกิดข้อผิดพลาดในการบันทึกข้อมูล' });
   }
 });
+
 
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
