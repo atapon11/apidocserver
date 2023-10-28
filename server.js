@@ -2,16 +2,20 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const bodyParser = require('body-parser');
-const cors = require('cors'); // เพิ่มบรรทัดนี้
 const server = express();
 const port = 5000;
+
+// เพิ่ม middleware สำหรับการกำหนด CORS headers
+server.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 // เปิดใช้งาน body-parser middleware
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({ extended: true }));
-
-// เปิดใช้งาน middleware CORS
-server.use(cors());
 
 server.get('/data', (req, res) => {
   const jsonData = fs.readFileSync(path.join(__dirname, 'data.json'), 'utf-8');
