@@ -7,11 +7,12 @@ const port = 5000;
 
 // เพิ่ม middleware สำหรับการกำหนด CORS headers
 server.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "https://muddy-dog-bedclothes.cyclic.app/data");
+  res.header("Access-Control-Allow-Origin", "*"); // ใช้ "*" เพื่ออนุญาตให้ทุกโดเมนเข้าถึง
   res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
+
 
 // เปิดใช้งาน body-parser middleware
 server.use(bodyParser.json());
