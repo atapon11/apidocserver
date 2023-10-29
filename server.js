@@ -9,6 +9,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const apiSchema = new Schema({
+  id: String, // เปลี่ยนจาก String เป็น Number
   url: String
 });
 
@@ -31,13 +32,34 @@ server.use(bodyParser.urlencoded({ extended: true }));
 
 server.get('/', async (req, res) => {
   try {
-    const data = await DataModel.find().select('-_id').exec();
+    const data = await DataModel.find().select('').exec();
     console.log(data); // แสดงข้อมูลในคอนโซล
     res.json(data);
   } catch (err) {
     res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูล' });
   }
 });
+
+server.get('/:id', async (req, res) => {
+  const id = req.params.id;
+  
+  try {
+    const data = await DataModel.findOne({ id:id }).select('-_id -__v'); // ใช้ Mongoose เรียกข้อมูลจาก MongoDB ด้วย id
+    if (data) {
+      console.log(data); // แสดงข้อมูลที่พบในคอนโซล
+      res.json(data); // ส่งข้อมูลที่พบกลับเป็น JSON
+    } else {
+      res.status(404).json({ message: 'ไม่พบข้อมูลสำหรับ id ที่ระบุ' });
+    }
+  } catch (err) {
+    res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูล' });
+  }
+});
+
+
+
+
+
 
 
 server.post('/', async (req, res) => {
@@ -55,7 +77,9 @@ server.put('/:id', async (req, res) => {
   const updatedData = req.body; // นำข้อมูลที่จะอัปเดตจากคำขอ PUT
 
   try {
-    const result = await DataModel.findByIdAndUpdate(id, updatedData, { new: true }); // อัปเดตข้อมูลใน MongoDB ด้วย ID และส่งข้อมูลที่อัปเดตกลับ
+    // ใช้ Mongoose เรียกข้อมูลจาก MongoDB ด้วย id และอัปเดตข้อมูล
+    const result = await DataModel.findOneAndUpdate({ id: id }, updatedData, { new: true });
+    
     if (result) {
       res.json(result); // ส่งข้อมูลที่อัปเดตกลับเป็น JSON
     } else {
@@ -65,6 +89,7 @@ server.put('/:id', async (req, res) => {
     res.status(500).json({ message: 'เกิดข้อผิดพลาดในการอัปเดตข้อมูล' });
   }
 });
+
 
 
 server.listen(port, () => {
